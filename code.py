@@ -1,12 +1,13 @@
 """
-financial modeling
+Financial modeling
 """
 import pandas as pd
 import matplotlib.pyplot as plt
+import statsmodels.api as sm
 from  sklearn.linear_model import LinearRegression
 
 train_data = pd.read_excel("train.xlsx")
-
+test_data = pd.read_excel("test.xlsx")
 dep_var = train_data[["ERTUPRS"]]
 indep_var = train_data[["ERBIST100",
                         "RKUR",
@@ -18,10 +19,57 @@ indep_var = train_data[["ERBIST100",
                         "RM3",
                         "RTUFE"]]
 
-lm = LinearRegression()
-model = lm.fit(indep_var, dep_var)
 
-test_data = pd.read_excel("test.xlsx")
+class Analysis:
+    """
+    Necessary for analysis
+    """
+    def read_value(self,arr,txt, dataset):
+        """
+         Read excel
+        """
+        arr_ = dataset[txt].values
+        for i in arr_:
+            arr.append(i)
+
+    def test_model(self,dict_model):
+        """
+        Model equation
+        """
+        return (model.intercept_) + (
+                model.coef_[0][0]*dict_model["bist100"]) + (
+                model.coef_[0][1]*dict_model["kur"]) + (
+                model.coef_[0][2]*dict_model["petrol"]) + (
+                model.coef_[0][3]*dict_model["faiz"]) + (
+                model.coef_[0][4]*dict_model["sue"]) + (
+                model.coef_[0][5]*dict_model["altin"]) + (
+                model.coef_[0][6]*dict_model["arzm2"]) + (
+                model.coef_[0][7]*dict_model["arzm3"]) + (
+                model.coef_[0][8]*dict_model["tufe"])
+
+class Model:
+    """
+    Creating two different models
+    """
+    def stats_model(self, bagimli, bagimsiz):
+        """
+        For Stats model
+        """
+        sabit = sm.add_constant(bagimsiz)
+        model_arb = sm.OLS(bagimli, sabit).fit()
+        return model_arb.summary()
+
+    def sk_model(self, bagimli, bagimsiz):
+        """"
+        For Scikit model
+        """
+        linear_reg = LinearRegression()
+        return linear_reg.fit(bagimsiz, bagimli)
+
+model_obj = Model()
+analysis_obj = Analysis()
+
+model = model_obj.sk_model(dep_var,indep_var)
 
 TUPRS_values = []
 BIST100_values = []
@@ -35,42 +83,16 @@ sue_values = []
 faiz_values = []
 
 
-def read_value(arr,txt, dataset):
-    """
-    read excel
-    """
-    arr_ = dataset[txt].values
-    for i in arr_:
-        arr.append(i)
-
-
-read_value(TUPRS_values, "ERTUPRS", test_data)
-read_value(BIST100_values, "ERBIST100", test_data)
-read_value(kur_values, "RKUR", test_data)
-read_value(petrol_values, "RPETROL", test_data)
-read_value(altin_values, "RALTIN", test_data)
-read_value(tufe_values, "RTUFE", test_data)
-read_value(m2_values, "RM2", test_data)
-read_value(m3_values, "RM3", test_data)
-read_value(sue_values, "RSUE", test_data)
-read_value(faiz_values, "RFAIZ", test_data)
-
-
-
-def test_model(dict_model):
-    """
-    model equation
-    """
-    return (model.intercept_) + (
-            model.coef_[0][0]*dict_model["bist100"]) + (
-            model.coef_[0][1]*dict_model["kur"]) + (
-            model.coef_[0][2]*dict_model["petrol"]) + (
-            model.coef_[0][3]*dict_model["faiz"]) + (
-            model.coef_[0][4]*dict_model["sue"]) + (
-            model.coef_[0][5]*dict_model["altin"]) + (
-            model.coef_[0][6]*dict_model["arzm2"]) + (
-            model.coef_[0][7]*dict_model["arzm3"]) + (
-            model.coef_[0][8]*dict_model["tufe"])
+analysis_obj.read_value(TUPRS_values, "ERTUPRS", test_data)
+analysis_obj.read_value(BIST100_values, "ERBIST100", test_data)
+analysis_obj.read_value(kur_values, "RKUR", test_data)
+analysis_obj.read_value(petrol_values, "RPETROL", test_data)
+analysis_obj.read_value(altin_values, "RALTIN", test_data)
+analysis_obj.read_value(tufe_values, "RTUFE", test_data)
+analysis_obj.read_value(m2_values, "RM2", test_data)
+analysis_obj.read_value(m3_values, "RM3", test_data)
+analysis_obj.read_value(sue_values, "RSUE", test_data)
+analysis_obj.read_value(faiz_values, "RFAIZ", test_data)
 
 COUNT = len(BIST100_values)
 arr_result = []
@@ -85,12 +107,14 @@ for index in range(COUNT):
             "arzm2":m2_values[index],
             "arzm3":m3_values[index],
             "tufe" :tufe_values[index]}
-    test_values = test_model(func_param)
+    test_values = analysis_obj.test_model(func_param)
     arr_result.append(test_values)
     func_param.clear()
+
 df_result = pd.DataFrame(arr_result).T
 df_real = pd.DataFrame(TUPRS_values).T
 
+# Graphic
 fig = plt.figure(figsize=(11, 8))
 plt.style.use("classic")
 plt.plot(arr_result,

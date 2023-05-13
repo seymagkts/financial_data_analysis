@@ -51,20 +51,20 @@ class Model:
     """
     Creating two different models
     """
-    def stats_model(self, bagimli, bagimsiz):
+    def stats_model(self, dependent, independent):
         """
         For Stats model
         """
-        sabit = sm.add_constant(bagimsiz)
-        model_arb = sm.OLS(bagimli, sabit).fit()
+        const = sm.add_constant(independent)
+        model_arb = sm.OLS(dependent, const).fit()
         return model_arb.summary()
 
-    def sk_model(self, bagimli, bagimsiz):
+    def sk_model(self, dependent, independent):
         """"
         For Scikit model
         """
         linear_reg = LinearRegression()
-        return linear_reg.fit(bagimsiz, bagimli)
+        return linear_reg.fit(independent, dependent)
 
 model_obj = Model()
 analysis_obj = Analysis()
@@ -138,3 +138,4 @@ plt.xlabel("Real")
 plt.legend(shadow=True)
 # plt.savefig(quality=95,fname="chart.png",facecolor="white")
 plt.show()
+

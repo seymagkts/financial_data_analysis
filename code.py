@@ -1,18 +1,25 @@
-import numpy as np 
+"""
+financial modeling
+"""
 import pandas as pd
-from scipy import stats
-import statsmodels.api as sm
 import matplotlib.pyplot as plt
-from matplotlib.pyplot import style
-from sklearn.linear_model import LinearRegression
+from  sklearn.linear_model import LinearRegression
 
 train_data = pd.read_excel("train.xlsx")
 
-dependent_var = train_data[["ERTUPRS"]]
-independent_var = train_data[["ERBIST100","RKUR","RPETROL","RFAIZ","RSUE","RALTIN","RM2","RM3","RTUFE"]]
+dep_var = train_data[["ERTUPRS"]]
+indep_var = train_data[["ERBIST100",
+                        "RKUR",
+                        "RPETROL",
+                        "RFAIZ",
+                        "RSUE",
+                        "RALTIN",
+                        "RM2",
+                        "RM3",
+                        "RTUFE"]]
 
 lm = LinearRegression()
-model = lm.fit(independent_var,dependent_var)
+model = lm.fit(indep_var, dep_var)
 
 test_data = pd.read_excel("test.xlsx")
 
@@ -27,35 +34,66 @@ m3_values = []
 sue_values = []
 faiz_values = []
 
-def read_value(arr,txt,dataset):
+
+def read_value(arr,txt, dataset):
+    """
+    read excel
+    """
     arr_ = dataset[txt].values
     for i in arr_:
         arr.append(i)
-        
-read_value(TUPRS_values,"ERTUPRS",test_data)
-read_value(BIST100_values,"ERBIST100",test_data)
-read_value(kur_values,"RKUR",test_data)
-read_value(petrol_values,"RPETROL",test_data)
-read_value(altin_values,"RALTIN",test_data)
-read_value(tufe_values,"RTUFE",test_data)
-read_value(m2_values,"RM2",test_data)
-read_value(m3_values,"RM3",test_data)
-read_value(sue_values,"RSUE",test_data)
-read_value(faiz_values,"RFAIZ",test_data)
 
-def test_model(bist100,kur,petrol,faiz,sue,altin,m2,m3,tufe): # predict
-    return (model.intercept_) + (model.coef_[0][0]*bist100) + (model.coef_[0][1]*kur) + (model.coef_[0][2]*petrol) + (model.coef_[0][3]*faiz) + (model.coef_[0][4]*sue) + (model.coef_[0][5]*altin) + (model.coef_[0][6]*m2) + (model.coef_[0][7]*m3) + (model.coef_[0][8]*tufe)
- 
-arr = []
-for i in range(len(BIST100_values)):
-    test_values = test_model(BIST100_values[i],kur_values[i],petrol_values[i],faiz_values[i],sue_values[i],altin_values[i],m2_values[i],m3_values[i],tufe_values[i])
-    arr.append(test_values)
-df_result = pd.DataFrame(arr).T
+
+read_value(TUPRS_values, "ERTUPRS", test_data)
+read_value(BIST100_values, "ERBIST100", test_data)
+read_value(kur_values, "RKUR", test_data)
+read_value(petrol_values, "RPETROL", test_data)
+read_value(altin_values, "RALTIN", test_data)
+read_value(tufe_values, "RTUFE", test_data)
+read_value(m2_values, "RM2", test_data)
+read_value(m3_values, "RM3", test_data)
+read_value(sue_values, "RSUE", test_data)
+read_value(faiz_values, "RFAIZ", test_data)
+
+
+
+def test_model(dict_model):
+    """
+    model equation
+    """
+    return (model.intercept_) + (
+            model.coef_[0][0]*dict_model["bist100"]) + (
+            model.coef_[0][1]*dict_model["kur"]) + (
+            model.coef_[0][2]*dict_model["petrol"]) + (
+            model.coef_[0][3]*dict_model["faiz"]) + (
+            model.coef_[0][4]*dict_model["sue"]) + (
+            model.coef_[0][5]*dict_model["altin"]) + (
+            model.coef_[0][6]*dict_model["arzm2"]) + (
+            model.coef_[0][7]*dict_model["arzm3"]) + (
+            model.coef_[0][8]*dict_model["tufe"])
+
+COUNT = len(BIST100_values)
+arr_result = []
+
+for index in range(COUNT):
+    func_param = {"bist100": BIST100_values[index],
+            "kur": kur_values[index],
+            "petrol": petrol_values[index],
+            "faiz": faiz_values[index],
+            "sue":sue_values[index],
+            "altin":altin_values[index],
+            "arzm2":m2_values[index],
+            "arzm3":m3_values[index],
+            "tufe" :tufe_values[index]}
+    test_values = test_model(func_param)
+    arr_result.append(test_values)
+    func_param.clear()
+df_result = pd.DataFrame(arr_result).T
 df_real = pd.DataFrame(TUPRS_values).T
- 
-fig = plt.figure(figsize=(11,8))
+
+fig = plt.figure(figsize=(11, 8))
 plt.style.use("classic")
-plt.plot(arr,
+plt.plot(arr_result,
          color="#cd3333",
          linewidth=3,
          linestyle="--",

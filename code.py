@@ -26,7 +26,7 @@ class Analysis:
     """
     def read_value(self,arr,txt, dataset):
         """
-         Read excel
+        Read excel
         """
         arr_ = dataset[txt].values
         for i in arr_:

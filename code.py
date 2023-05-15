@@ -110,10 +110,7 @@ for index in range(COUNT):
     test_values = analysis_obj.test_model(func_param)
     arr_result.append(test_values)
     func_param.clear()
-
-df_result = pd.DataFrame(arr_result).T
-df_real = pd.DataFrame(TUPRS_values).T
-
+    
 # Graphic
 fig = plt.figure(figsize=(11, 8))
 plt.style.use("classic")

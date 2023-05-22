@@ -1,13 +1,15 @@
 """
 Financial modeling
 """
+
 import pandas as pd
 import matplotlib.pyplot as plt
 import statsmodels.api as sm
 from  sklearn.linear_model import LinearRegression
 
 train_data = pd.read_excel("train.xlsx")
-test_data = pd.read_excel("test.xlsx")
+td = pd.read_excel("test.xlsx")
+test_data = pd.DataFrame(td)
 dep_var = train_data[["ERTUPRS"]]
 indep_var = train_data[["ERBIST100",
                         "RKUR",
@@ -112,27 +114,30 @@ for index in range(COUNT):
     func_param.clear()
     
 # Graphic
-fig = plt.figure(figsize=(11, 8))
-plt.style.use("classic")
-plt.plot(arr_result,
-         color="#cd3333",
-         linewidth=3,
-         linestyle="--",
-         marker="o",
-         markersize=8,
-         markerfacecolor="yellow",
-         markeredgewidth=2,
-         label="Model return")
-plt.plot(TUPRS_values,
-         "#3d59ab",
-         linewidth=3,
-         linestyle="--",
-         marker="o",
-         markersize=8,
-         label="Real return")
-plt.ylabel("Model")
-plt.xlabel("Real")
-plt.legend(shadow=True)
-# plt.savefig(quality=95,fname="chart.png",facecolor="white")
-plt.show()
-
+class visualize:
+    def line_vis(self,result,real):
+        fig = plt.figure(figsize=(11, 8))
+        plt.style.use("classic")
+        plt.plot(result,
+                 color="#cd3333",
+                 linewidth=3,
+                 linestyle="--",
+                 marker="o",
+                 markersize=8,
+                 markerfacecolor="yellow",
+                 markeredgewidth=2,
+                 label="Model return")
+        plt.plot(real,
+                 "#3d59ab",
+                 linewidth=3,
+                 linestyle="--",
+                 marker="o",
+                 markersize=8,
+                 label="Real return")
+        plt.ylabel("Model")
+        plt.xlabel("Real")
+        plt.legend(shadow=True)
+        # plt.savefig(quality=95,fname="chart.png",facecolor="white")
+        plt.show()
+vis = visualize()
+vis.line_vis(arr_result,TUPRS_values)

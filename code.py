@@ -1,11 +1,12 @@
 """
 Financial modeling
 """
-
 import pandas as pd
 import matplotlib.pyplot as plt
+import seaborn as sns
 import statsmodels.api as sm
 from  sklearn.linear_model import LinearRegression
+
 
 train_data = pd.read_excel("train.xlsx")
 td = pd.read_excel("test.xlsx")
@@ -116,6 +117,9 @@ for index in range(COUNT):
 # Graphic
 class visualize:
     def line_vis(self,result,real):
+        """
+        Line plot 
+        """
         fig = plt.figure(figsize=(11, 8))
         plt.style.use("classic")
         plt.plot(result,
@@ -139,5 +143,15 @@ class visualize:
         plt.legend(shadow=True)
         # plt.savefig(quality=95,fname="chart.png",facecolor="white")
         plt.show()
+        
+    def cor_vis(self,data):
+        """
+        Correlation matrix
+        """
+        sns.heatmap(data.corr(), annot= True)
+        
+
 vis = visualize()
+data = test_data[["ERTUPRS","ERBIST100","RKUR","RPETROL","RALTIN","RSUE","RM2","RM3","RTUFE","RFAIZ"]]
+vis.cor_vis(data)
 vis.line_vis(arr_result,TUPRS_values)

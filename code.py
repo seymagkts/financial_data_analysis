@@ -155,15 +155,4 @@ class Visualize:
 
 
 vis = Visualize()
-corr_data = test_data[["ERTUPRS",
-                  "ERBIST100",
-                  "RKUR",
-                  "RPETROL",
-                  "RALTIN",
-                  "RSUE",
-                  "RM2",
-                  "RM3",
-                  "RTUFE",
-                  "RFAIZ"]]
-vis.cor_vis(corr_data)
 vis.line_vis(arr_result,TUPRS_values)
